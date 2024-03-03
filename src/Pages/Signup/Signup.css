@@ -1,0 +1,17 @@
+.signup-root {
+    display: flex;
+    justify-content: center;
+}
+
+
+.signup-form-container-formfield {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.signup-form-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+}

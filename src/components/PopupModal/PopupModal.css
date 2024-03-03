@@ -1,0 +1,19 @@
+.popup-modal-root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 5;
+}
+
+.popup-modal-close-container {
+    position: absolute;
+    color: white;
+    top: 1.5rem;
+    right: 2.5rem;
+}

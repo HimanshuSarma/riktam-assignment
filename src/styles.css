@@ -1,0 +1,47 @@
+.App {
+    font-family: Montserrat;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+}
+
+.form-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-normal-width {
+    width: 20rem;
+}
+
+.form-normal-width > * {
+    width: 100%;
+}
+
+form > button {
+    width: fit-content !important;
+}
+
+* {
+    font-family: inherit;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.cp {
+    cursor: pointer;
+}
