@@ -4,12 +4,15 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from 'react-router-dom';
 
 import App from "./App.js";
+import UserContextProvider from "./globalState/userState.js";
 
 const rootElement = document.getElementById("root")!;
 const root = ReactDOM.createRoot(rootElement);
 
 root.render(
     <BrowserRouter>
-        <App />
+        <UserContextProvider>
+            <App />
+        </UserContextProvider>
     </BrowserRouter>
 );

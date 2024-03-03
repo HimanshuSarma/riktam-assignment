@@ -7,6 +7,7 @@ interface UserContextSchemaType extends UserSchemaType {
 interface UserContextType {
     user: UserContextSchemaType | null,
     setUser: React.Dispatch<React.SetStateAction<UserContextSchemaType | null>>,
+    isUserDataSet: boolean,
     clearUserState: () => void,
     setUserState: (userData: UserContextSchemaType) => void
 };

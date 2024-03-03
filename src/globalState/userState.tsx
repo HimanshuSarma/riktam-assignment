@@ -9,6 +9,7 @@ const userContext = createContext<UserContextType | null>(null);
 
 const UserContextProvider: React.FC<UserStatePropType> = ({ children }) => {
     const [user, setUser] = useState<UserContextSchemaType | null>(null);
+    const [isUserDataSet, setIsUserDataSet] = useState<boolean>(false);
 
     const setUserState = (userData: UserContextSchemaType) => {
         setUser(userData);
@@ -23,10 +24,14 @@ const UserContextProvider: React.FC<UserStatePropType> = ({ children }) => {
         const user: UserContextSchemaType | null = getItem('user') as UserContextSchemaType | null;
         setUser(user);
     }, []);
+
+    useEffect(() => {
+        setIsUserDataSet(true)
+    }, [user]);
     // useEffects end...
 
     return (
-        <userContext.Provider value={{ user, setUser, clearUserState, setUserState }}>
+        <userContext.Provider value={{ user, setUser, clearUserState, setUserState, isUserDataSet }}>
             {children}
         </userContext.Provider>
     )
