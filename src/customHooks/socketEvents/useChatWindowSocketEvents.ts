@@ -20,7 +20,9 @@ const useChatWindowSocketEvents = (
     updateChatMessagesHandler: (payload: updateChatMessagesArgsType) => void, 
     resetFormState: () => void,
     updateAddUsersFormState: (payload: GroupSchemaType, users: Array<string>) => void,
-    updateRemoveUser: (userId: Array<string>) => void,
+    updateRemoveUserFormState: (userId: Array<string>) => void,
+    setAllChatRooms: React.Dispatch<React.SetStateAction<Array<GroupSchemaType>>>,
+    chatRoom: GroupSchemaType
 ) => {
 
     // Context API data start...
@@ -99,14 +101,28 @@ const useChatWindowSocketEvents = (
             //     return [...chatMessages, payload];
             // });
             updateChatMessagesHandler({ action: 'newMessage', payload: res?.payload });
-            resetFormState();  
+        }
+
+        if (res?.emitter) {
+            if (res?.success) {
+                resetFormState();
+            } else {
+                errorToastMessage(res?.errorMessage);
+            }
         }
     };
 
     const onEditMessageHandler = (res: OnListenerResponseType) => {
         if (res?.success && res?.payload?._id) {
             updateChatMessagesHandler({ action: 'editMessage', payload: res?.payload });
-            resetFormState();
+        }
+
+        if (res?.emitter) {
+            if (res?.success) {
+                resetFormState();
+            } else {
+                errorToastMessage(res?.errorMessage);
+            }
         }
     };
 
@@ -114,7 +130,14 @@ const useChatWindowSocketEvents = (
         if (res?.success && res?.payload?._id) {
             console.log(res?.payload, 'likepayload');
             updateChatMessagesHandler({ action: 'editMessage', payload: res?.payload });
-            resetFormState();
+        }
+
+        if (res?.emitter) {
+            if (res?.success) {
+                resetFormState();
+            } else {
+                errorToastMessage(res?.errorMessage);
+            }
         }
     };
 
@@ -125,12 +148,35 @@ const useChatWindowSocketEvents = (
                 roomId: res?.payload?.roomId
             } });
         }
+
+        if (res?.emitter) {
+            if (res?.success) {
+                // resetFormState();
+            } else {
+                errorToastMessage(res?.errorMessage);
+            }
+        }
     };
 
     const onAddUsersInChatRoomHandler = (res: OnListenerResponseType) => {
         console.log(res, 'addUsersInChatRoom');
         if (res?.success && res?.payload) {
-            updateAddUsersFormState(res?.payload?.updatedChatRoom, res?.payload?.users);
+            if (res?.emitter) {
+                updateAddUsersFormState(res?.payload?.updatedChatRoom, res?.payload?.users);
+            }
+
+            setAllChatRooms((allChatRooms: Array<GroupSchemaType>) => {
+                return allChatRooms?.map((currChatRoom: GroupSchemaType) => {
+                    if (currChatRoom?._id === res?.payload?.updatedChatRoom?._id) {
+                        return {
+                            ...currChatRoom,
+                            users: [...currChatRoom?.users, ...res?.payload?.users]
+                        }
+                    } else {
+                        return currChatRoom;
+                    }
+                })
+            });
             successToastMessage(`User(s) added to chat room`);
         } else {
             errorToastMessage(res?.errorMessage);
@@ -140,7 +186,25 @@ const useChatWindowSocketEvents = (
     const onRemoveUsersFromChatRooomHandler = (res: OnListenerResponseType) => {
         console.log(res, `removeUsersFromChatRoomAck`);
         if (res?.success && res?.payload) {
-            updateRemoveUser(res?.payload?.users);
+            if (res?.emitter) {
+                updateRemoveUserFormState(res?.payload?.users);
+            }
+
+            setAllChatRooms((allChatRooms: Array<GroupSchemaType>) => {
+                return allChatRooms?.map((currChatRoom: GroupSchemaType) => {
+                    if (currChatRoom?._id === res?.payload?.updatedChatRoom?._id) {
+                        return {
+                            ...currChatRoom,
+                            // users: [...currChatRoom?.users, ...users]
+                            users: currChatRoom?.users?.filter((user: string) => {
+                                return !(res?.payload?.users?.includes(user));
+                            })
+                        }
+                    } else {
+                        return currChatRoom;
+                    }
+                })
+            });
             successToastMessage(`User(s) removed from chat room`);
         } else {
             errorToastMessage(res?.errorMessage);
@@ -159,22 +223,30 @@ const useChatWindowSocketEvents = (
         // on listeners start...
         socketConnection.on(`getAllChatMessagesAck`, onGetAllChatMessagesHandler);
         socketConnection.on(`newMessageBroadcast`, onNewMessageHandler);
+        socketConnection.on(`newMessageAck`, onNewMessageHandler);
         socketConnection.on(`addUsersInChatRoomAck`, onAddUsersInChatRoomHandler);
         socketConnection.on(`removeUsersFromChatRoomAck`, onRemoveUsersFromChatRooomHandler);
         socketConnection.on(`editMessageBroadcast`, onEditMessageHandler);
+        socketConnection.on(`editMessageAck`, onEditMessageHandler);
         socketConnection.on(`likeOrUnlikeMessageBroadcast`, onLikeOrDislikeMessageHandler);
+        socketConnection.on(`likeOrUnlikeMessageAck`, onLikeOrDislikeMessageHandler);
         socketConnection.on(`deleteMessageBroadcast`, onDeleteMessageHandler);
+        socketConnection.on(`deleteMessageAck`, onDeleteMessageHandler);
         
         // on listeners end...
 
         return () => {
             socketConnection.off(`getAllChatMessagesAck`, onGetAllChatMessagesHandler);
             socketConnection.off(`newMessageBroadcast`, onNewMessageHandler);
+            socketConnection.off(`newMessageAck`, onNewMessageHandler);
             socketConnection.off(`addUsersInChatRoomAck`, onAddUsersInChatRoomHandler);
             socketConnection.off(`removeUsersFromChatRoomAck`, onRemoveUsersFromChatRooomHandler);
             socketConnection.off(`editMessageBroadcast`, onEditMessageHandler);
+            socketConnection.off(`editMessageAck`, onEditMessageHandler);
             socketConnection.off(`likeOrUnlikeMessageBroadcast`, onLikeOrDislikeMessageHandler);
+            socketConnection.off(`likeOrUnlikeMessageAck`, onLikeOrDislikeMessageHandler);
             socketConnection.off(`deleteMessageBroadcast`, onDeleteMessageHandler);
+            socketConnection.off(`deleteMessageAck`, onDeleteMessageHandler);
         }
     }, [roomId, loggedInUser]);
 

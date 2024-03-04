@@ -167,23 +167,10 @@ const ChatWindow: React.FC<ChatWindowPropType> = ({
 
         setToBeAddedUsersInGroupChat([]);
 
-        setAllChatRooms((allChatRooms: Array<GroupSchemaType>) => {
-            return allChatRooms?.map((currChatRoom: GroupSchemaType) => {
-                if (currChatRoom?._id === chatRoom?._id) {
-                    return {
-                        ...currChatRoom,
-                        users: [...currChatRoom?.users, ...users]
-                    }
-                } else {
-                    return currChatRoom;
-                }
-            })
-        });
-
         setLatestAction('added');
     }
 
-    const updateRemoveUser = (users: Array<string>) => {
+    const updateRemoveUserFormState = (users: Array<string>) => {
 
         setAllChatRoomCouldBeRemovedUsers(allChatRoomCouldBeRemovedUsers => {
             return allChatRoomCouldBeRemovedUsers?.filter((user) => {
@@ -192,23 +179,6 @@ const ChatWindow: React.FC<ChatWindowPropType> = ({
         });
 
         setToBeRemovedUsersInGroupChat([]);
-
-
-        setAllChatRooms((allChatRooms: Array<GroupSchemaType>) => {
-            return allChatRooms?.map((currChatRoom: GroupSchemaType) => {
-                if (currChatRoom?._id === chatRoom?._id) {
-                    return {
-                        ...currChatRoom,
-                        // users: [...currChatRoom?.users, ...users]
-                        users: currChatRoom?.users?.filter((user: string) => {
-                            return !(users?.includes(user));
-                        })
-                    }
-                } else {
-                    return currChatRoom;
-                }
-            })
-        });
 
         setLatestAction('deleted');
     }
@@ -340,7 +310,9 @@ const ChatWindow: React.FC<ChatWindowPropType> = ({
         updateChatMessagesHandler,
         resetFormState,
         updateAddUsersFormState,
-        updateRemoveUser,
+        updateRemoveUserFormState,
+        setAllChatRooms,
+        chatRoom
     );
     // Custom hooks call end...
 
