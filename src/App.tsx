@@ -34,7 +34,7 @@ export default function App() {
         position={'top-right'}
         autoClose={5000}
       />
-      <h1>Riktam Assignment</h1>
+      <h1>Riktam assignment</h1>
       <Navbar />
       {isUserDataSet ? <Routes>
         <Route path='/' element={<Home />} />
