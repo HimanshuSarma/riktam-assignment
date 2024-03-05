@@ -65,6 +65,13 @@ const Navbar: React.FC = (): JSX.Element => {
                             Logout
                         </button>
                     )} 
+
+                    {loggedInUser?.token ? (
+                        <NavLink 
+                            to="/chats"
+                            className={`nav-btn`}
+                        >See your chats</NavLink>
+                    ) : null}
                 </div>
             </nav>
         </>
