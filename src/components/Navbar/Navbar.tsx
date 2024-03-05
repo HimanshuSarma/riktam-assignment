@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { NavLink, useNavigate, NavigateFunction } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from "react";
+import { NavLink, useNavigate, useLocation, NavigateFunction, Location } from 'react-router-dom';
 
 import { userContext } from "../../globalState/userState";
 
@@ -21,6 +21,7 @@ const Navbar: React.FC = (): JSX.Element => {
 
     // Navigation hooks start...
     const navigate: NavigateFunction = useNavigate();
+    const location: Location = useLocation();
     // Navigation hooks end...
 
     // Handlers start...
@@ -66,7 +67,7 @@ const Navbar: React.FC = (): JSX.Element => {
                         </button>
                     )} 
 
-                    {loggedInUser?.token ? (
+                    {loggedInUser?.token && location?.pathname !== `/chats` ? (
                         <NavLink 
                             to="/chats"
                             className={`nav-btn`}
